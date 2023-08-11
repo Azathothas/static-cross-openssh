@@ -3,7 +3,7 @@ ARCH ?= armv7-eabihf
 dl_dir := $(dl_dir)/toolchain
 state_dir := $(state_dir)/toolchain
 # Use curl & directly fetch the latest Toolchain URL for any $ARCH
-toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/"$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)"
+toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2 | sed 's/ //g')
 #toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(ARCH)--musl--stable-2021.11-%d.tar.bz2
 # Print ToolChain URL for Debug Purposes
 $(info toolchain_url: $(toolchain_url))
