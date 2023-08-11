@@ -9,14 +9,13 @@ toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$
 # Check if a musl toolchain was located (url ends with .tar.bz2), if not try uclibc-stable
 # Function to check and modify toolchain_url if necessary
 define check_toolchain_url
-	$(if $(filter %.tar.bz2,$(toolchain_url)),,$(eval toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+glibc.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)))
+	$(if $(filter %.tar.bz2,$(toolchain_url)),,$(eval toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+glibc.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)))
 endef
+toolchain_file := toolchain-$(ARCH).tar.bz2
 .PHONY: fetch_toolchain
 fetch_toolchain:
 	$(call check_toolchain_url)
-        # Print ToolChain URL for Debug Purposes
 	@echo "Fetching toolchain from: $(toolchain_url)"
-toolchain_file := toolchain-$(ARCH).tar.bz2
 
 .PHONY: all
 .SHELLFLAGS = -e -c
