@@ -2,7 +2,9 @@ ARCH ?= armv7-eabihf
 
 dl_dir := $(dl_dir)/toolchain
 state_dir := $(state_dir)/toolchain
-toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(ARCH)--musl--stable-2021.11-%d.tar.bz2
+toolchain_url := $(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$ARCH/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
+#curl -s https://toolchains.bootlin.com/downloads/releases/toolchains/x86-64/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2
+#toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(ARCH)--musl--stable-2021.11-%d.tar.bz2
 toolchain_file := toolchain-$(ARCH).tar.bz2
 
 .PHONY: all
@@ -15,11 +17,12 @@ define download =
 	mkdir -p '$(dl_dir)'
 	cd '$(dl_dir)'
 	# The last date component can changes, we may not have a .1, so try up to 32
-	for i in $$(seq 32); do
-		err=0
-		wget  "$$(printf '$(toolchain_url)' $$i)" -O- > '$(dl_dir)/$(toolchain_file)' || err=$$?
-		[ $$err -eq 8 ] && continue || [ $$err -eq 0 ] && break
-	done
+	#for i in $$(seq 32); do
+		#err=0
+		#wget  "$$(printf '$(toolchain_url)' $$i)" -O- > '$(dl_dir)/$(toolchain_file)' || err=$$?
+		#[ $$err -eq 8 ] && continue || [ $$err -eq 0 ] && break
+	#done
+        wget '$(toolchain_url)' -O- > '$(dl_dir)/$(toolchain_file)'
 	$(call depfile,toolchain,download)
 endef
 
