@@ -1,4 +1,6 @@
+# Use Curl + jq + GitHub API to always fetch @latest 
 openssh/VERSION := $(shell curl -qfsSL https://api.github.com/repos/openssh/openssh-portable/tags | jq -r '.[0].name')
+#openssh/VERSION := V_9_3_P1
 openssh/TARBALL := https://github.com/openssh/openssh-portable/archive/refs/tags/$(openssh/VERSION).tar.gz
 openssh/DEPENDS := zlib openssl
 
