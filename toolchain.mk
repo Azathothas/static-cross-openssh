@@ -6,17 +6,20 @@ state_dir := $(state_dir)/toolchain
 
 
 # Function to fetch the latest toolchain URL for a specific libc type (musl or glibc)
+TOOLCHAIN_BASE_URL := https://toolchains.bootlin.com/downloads/releases/toolchains
+
+# Function to fetch the latest toolchain URL for a specific libc type (musl or glibc)
 define fetch_toolchain_url
-$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+$(1).*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
+$(shell curl -qfsSL "$(TOOLCHAIN_BASE_URL)/$(ARCH)/tarballs/" | grep -oE 'href="[^"]+$(1).*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
 endef
 
 # Try to fetch musl toolchain URL
 musl_toolchain_url := $(call fetch_toolchain_url,musl)
 # If musl toolchain URL not found, try glibc toolchain URL
 ifeq ($(musl_toolchain_url),)
-    toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(call fetch_toolchain_url,glibc)
+    toolchain_url := $(call fetch_toolchain_url,glibc)
 else
-    toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(musl_toolchain_url)
+    toolchain_url := $(musl_toolchain_url)
 endif
 
 .PHONY: all
