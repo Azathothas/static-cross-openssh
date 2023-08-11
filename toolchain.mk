@@ -3,8 +3,32 @@ ARCH ?= armv7-eabihf
 dl_dir := $(dl_dir)/toolchain
 state_dir := $(state_dir)/toolchain
 # Use curl & directly fetch the latest Toolchain URL for any $ARCH
-toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
+
+
+# Function to fetch the latest toolchain URL for a specific libc type (musl or glibc)
+define fetch_toolchain_url
+$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+$(1).*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
+endef
+
+# Try to fetch musl toolchain URL
+musl_toolchain_url := $(call fetch_toolchain_url,musl)
+# If musl toolchain URL not found, try glibc toolchain URL
+ifeq ($(musl_toolchain_url),)
+    toolchain_url := $(call fetch_toolchain_url,glibc)
+else
+    toolchain_url := $(musl_toolchain_url)
+endif
+
+.PHONY: all
+all:
+    @echo "Toolchain URL: $(toolchain_url)"
+
+
+#toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
 #toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(ARCH)--musl--stable-2021.11-%d.tar.bz2
+# Check if a musl toolchain was located (url ends with .tar.bz2), if not try uclibc-stable
+
+
 # Print ToolChain URL for Debug Purposes
 $(info toolchain_url: $(toolchain_url))
 toolchain_file := toolchain-$(ARCH).tar.bz2
