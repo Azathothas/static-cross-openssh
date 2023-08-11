@@ -5,17 +5,9 @@ state_dir := $(state_dir)/toolchain
 # Use curl & directly fetch the latest Toolchain URL for any $ARCH
 toolchain_url :=  https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+musl.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)
 #toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(ARCH)--musl--stable-2021.11-%d.tar.bz2
-
-# Check if a musl toolchain was located (url ends with .tar.bz2), if not try uclibc-stable
-# Function to check and modify toolchain_url if necessary
-define check_toolchain_url
-	$(if $(filter %.tar.bz2,$(toolchain_url)),,$(eval toolchain_url := https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/$(shell curl -qfsSL https://toolchains.bootlin.com/downloads/releases/toolchains/$(ARCH)/tarballs/ | grep -oE 'href="[^"]+glibc.*stable.*tar\.bz2"' | tail -n 1 | cut -d'"' -f2)))
-endef
+# Print ToolChain URL for Debug Purposes
+$(info toolchain_url: $(toolchain_url))
 toolchain_file := toolchain-$(ARCH).tar.bz2
-.PHONY: fetch_toolchain
-fetch_toolchain:
-	$(call check_toolchain_url)
-	@echo "Fetching toolchain from: $(toolchain_url)"
 
 .PHONY: all
 .SHELLFLAGS = -e -c
