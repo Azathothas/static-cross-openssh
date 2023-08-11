@@ -1,5 +1,7 @@
-openssl/VERSION := 1.1.1u
+openssl/VERSION := $(shell curl -qfsSL https://api.github.com/repos/openssl/openssl/releases | jq -r '.[0].name' | sed 's/[^0-9.]//g')
 openssl/TARBALL := https://www.openssl.org/source/openssl-$(openssl/VERSION).tar.gz
+# openssl/TARBALL := https://github.com/openssl/openssl/releases/download/openssl-$(openssl/VERSION)/openssl-$(openssl/VERSION).tar.gz
+# openssl/TARBALL := $( shell curl -qfsSL https://api.github.com/repos/openssl/openssl/releases/latest | jq -r '.tarball_url')
 
 openssl/dir = $(build_dir)/openssl/openssl-$(openssl/VERSION)
 
