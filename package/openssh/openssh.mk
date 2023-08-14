@@ -6,7 +6,7 @@ openssh/DEPENDS := zlib openssl
 
 openssh/dir := $(build_dir)/openssh/openssh-portable-$(openssh/VERSION)
 openssh/bin := $(bin_dir)/openssh-$(openssh/VERSION).tgz
-openssh/binfiles := etc/ssh sbin/sshd libexec/sftp-server
+openssh/binfiles := sbin/sshd libexec/sftp-server
 openssh/conffiles := etc/sshd_config
 openssh/emptydir := var/empty
 
